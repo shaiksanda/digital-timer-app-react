@@ -3,7 +3,14 @@ import {Component} from 'react'
 import './index.css'
 
 class DigitalTimer extends Component {
-  state = {count: 25 * 60, isStarted: false, intervalId: null}
+  state = {count: 25 * 60, isStarted: false, intervalId: null, timerLimit: 25}
+
+  componentWillUnmount() {
+    const {intervalId} = this.state
+    if (intervalId) {
+      clearInterval(intervalId)
+    }
+  }
 
   tick = () => {
     const {count, intervalId} = this.state
@@ -37,23 +44,23 @@ class DigitalTimer extends Component {
     })
   }
 
-  handlePlus = () => {
-    const {count, isStarted} = this.state
-    // Only update the timer limit if the timer is not running
-    if (!isStarted) {
-      this.setState({
-        count: count + 60,
-      })
+  handleMinus = () => {
+    const {timerLimit, isStarted} = this.state
+    if (!isStarted && timerLimit > 1) {
+      this.setState(prevState => ({
+        timerLimit: prevState.timerLimit - 1,
+        count: (prevState.timerLimit - 1) * 60, // Update count based on new timer limit
+      }))
     }
   }
 
-  handleMinus = () => {
-    const {count, isStarted} = this.state
-    // Only update the timer limit if the timer is not running
+  handlePlus = () => {
+    const {isStarted} = this.state
     if (!isStarted) {
-      this.setState({
-        count: count - 60,
-      })
+      this.setState(prevState => ({
+        timerLimit: prevState.timerLimit + 1,
+        count: (prevState.timerLimit + 1) * 60, // Update count based on new timer limit
+      }))
     }
   }
 
@@ -70,7 +77,7 @@ class DigitalTimer extends Component {
   }
 
   render() {
-    const {isStarted} = this.state
+    const {isStarted, timerLimit} = this.state
     return (
       <div className="bg-container">
         <h1>Digital Timer</h1>
@@ -122,11 +129,19 @@ class DigitalTimer extends Component {
               </p>
             </div>
             <div className="update-buttons-container">
-              <button type="button" onClick={this.handleMinus}>
+              <button
+                type="button"
+                onClick={this.handleMinus}
+                disabled={isStarted}
+              >
                 -
               </button>
-              <p className="timer">25</p>
-              <button type="button" onClick={this.handlePlus}>
+              <p className="timer">{timerLimit}</p>
+              <button
+                type="button"
+                onClick={this.handlePlus}
+                disabled={isStarted}
+              >
                 +
               </button>
             </div>
