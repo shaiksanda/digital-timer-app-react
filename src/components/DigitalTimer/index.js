@@ -37,18 +37,24 @@ class DigitalTimer extends Component {
     })
   }
 
-  handleMinus = () => {
-    const {count} = this.state
-    this.setState({
-      count: count - 60,
-    })
+  handlePlus = () => {
+    const {count, isStarted} = this.state
+    // Only update the timer limit if the timer is not running
+    if (!isStarted) {
+      this.setState({
+        count: count + 60,
+      })
+    }
   }
 
-  handlePlus = () => {
-    const {count} = this.state
-    this.setState({
-      count: count + 60,
-    })
+  handleMinus = () => {
+    const {count, isStarted} = this.state
+    // Only update the timer limit if the timer is not running
+    if (!isStarted) {
+      this.setState({
+        count: count - 60,
+      })
+    }
   }
 
   handleStart = () => {
@@ -92,8 +98,8 @@ class DigitalTimer extends Component {
                     alt={isStarted ? 'pause icon' : 'play icon'}
                     className="icon"
                   />
+                  <p className="timer-text">{isStarted ? 'Pause' : 'Start'}</p>
                 </button>
-                <p className="timer-text">{isStarted ? 'Pause' : 'Start'}</p>
               </div>
               <div className="buttons-container">
                 <button
